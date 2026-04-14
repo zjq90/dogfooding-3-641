@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.mapper.DepositRecordMapper">
+
+    <resultMap id="DepositRecordResultMap" type="com.library.entity.DepositRecord">
+        <id column="id" property="id"/>
+        <result column="borrower_id" property="borrowerId"/>
+        <result column="borrower_name" property="borrowerName"/>
+        <result column="amount" property="amount"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="operator_id" property="operatorId"/>
+        <result column="operator_name" property="operatorName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectDepositPage" resultMap="DepositRecordResultMap">
+        SELECT 
+            dr.id,
+            dr.borrower_id,
+            b.name AS borrower_name,
+            dr.amount,
+            dr.type,
+            dr.status,
+            dr.remark,
+            dr.operator_id,
+            dr.operator_name,
+            dr.create_time,
+            dr.update_time
+        FROM deposit_record dr
+        LEFT JOIN borrower b ON dr.borrower_id = b.id AND b.deleted = 0
+        WHERE dr.deleted = 0
+        <if test="borrowerId != null">
+            AND dr.borrower_id = #{borrowerId}
+        </if>
+        <if test="type != null">
+            AND dr.type = #{type}
+        </if>
+        <if test="status != null">
+            AND dr.status = #{status}
+        </if>
+        ORDER BY dr.create_time DESC
+    </select>
+
+</mapper>

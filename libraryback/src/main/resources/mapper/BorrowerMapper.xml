@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.mapper.BorrowerMapper">
+
+    <resultMap id="BorrowerResultMap" type="com.library.entity.Borrower">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="id_card" property="idCard"/>
+        <result column="gender" property="gender"/>
+        <result column="address" property="address"/>
+        <result column="deposit" property="deposit"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectBorrowerPage" resultMap="BorrowerResultMap">
+        SELECT 
+            id,
+            name,
+            phone,
+            id_card,
+            gender,
+            address,
+            deposit,
+            status,
+            remark,
+            create_time,
+            update_time
+        FROM borrower
+        WHERE deleted = 0
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="phone != null and phone != ''">
+            AND phone LIKE CONCAT('%', #{phone}, '%')
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

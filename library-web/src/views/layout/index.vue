@@ -19,14 +19,26 @@
           active-text-color="#5B8FF9"
           router
         >
-          <el-menu-item 
-            v-for="item in menuList" 
-            :key="item.path" 
-            :index="item.path"
-          >
-            <i :class="item.icon"></i>
-            <span>{{ item.title }}</span>
-          </el-menu-item>
+          <template v-for="item in menuList">
+            <el-submenu v-if="item.children" :key="item.title" :index="item.title">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{ item.title }}</span>
+              </template>
+              <el-menu-item 
+                v-for="child in item.children" 
+                :key="child.path" 
+                :index="child.path"
+              >
+                <i :class="child.icon"></i>
+                <span>{{ child.title }}</span>
+              </el-menu-item>
+            </el-submenu>
+            <el-menu-item v-else :key="item.path" :index="item.path">
+              <i :class="item.icon"></i>
+              <span>{{ item.title }}</span>
+            </el-menu-item>
+          </template>
         </el-menu>
       </div>
       
@@ -72,7 +84,16 @@ export default {
         { path: '/dashboard', title: '数据概览', icon: 'el-icon-s-data' },
         { path: '/books', title: '图书管理', icon: 'el-icon-reading' },
         { path: '/categories', title: '分类管理', icon: 'el-icon-folder-opened' },
-        { path: '/borrow', title: '借阅管理', icon: 'el-icon-document' },
+        { 
+          title: '借阅管理', 
+          icon: 'el-icon-document',
+          children: [
+            { path: '/borrow', title: '借阅记录', icon: 'el-icon-document' },
+            { path: '/borrowers', title: '借阅人员', icon: 'el-icon-user-solid' },
+            { path: '/deposit', title: '押金明细', icon: 'el-icon-wallet' },
+            { path: '/borrow-orders', title: '借阅订单', icon: 'el-icon-tickets' }
+          ]
+        },
         { path: '/users', title: '用户管理', icon: 'el-icon-user' },
         { path: '/departments', title: '部门管理', icon: 'el-icon-office-building' },
         { path: '/employees', title: '人员管理', icon: 'el-icon-s-custom' }

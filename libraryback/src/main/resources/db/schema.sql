@@ -225,3 +225,108 @@ INSERT INTO sys_department_permission (department_id, permission_id) VALUES
 (5, 1), (5, 4),
 (6, 1), (6, 2), (6, 8), (6, 9),
 (7, 1), (7, 2), (7, 4), (7, 8), (7, 9);
+
+-- 借阅人员表
+CREATE TABLE IF NOT EXISTS borrower (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '借阅人员ID',
+    name VARCHAR(50) NOT NULL COMMENT '姓名',
+    phone VARCHAR(20) NOT NULL COMMENT '手机号',
+    id_card VARCHAR(18) COMMENT '身份证号',
+    gender TINYINT DEFAULT 1 COMMENT '性别：0-女，1-男',
+    address VARCHAR(255) COMMENT '地址',
+    deposit DECIMAL(10,2) DEFAULT 0.00 COMMENT '押金余额',
+    status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    remark VARCHAR(255) COMMENT '备注',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除',
+    INDEX idx_phone (phone),
+    INDEX idx_id_card (id_card),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='借阅人员表';
+
+-- 押金明细表
+CREATE TABLE IF NOT EXISTS deposit_record (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '押金记录ID',
+    borrower_id BIGINT NOT NULL COMMENT '借阅人员ID',
+    borrower_name VARCHAR(50) COMMENT '借阅人姓名',
+    amount DECIMAL(10,2) NOT NULL COMMENT '金额',
+    type TINYINT NOT NULL COMMENT '类型：1-缴纳，2-退还',
+    status TINYINT DEFAULT 1 COMMENT '状态：0-已取消，1-已完成',
+    remark VARCHAR(255) COMMENT '备注',
+    operator_id BIGINT COMMENT '操作人ID',
+    operator_name VARCHAR(50) COMMENT '操作人姓名',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除',
+    INDEX idx_borrower_id (borrower_id),
+    INDEX idx_type (type),
+    INDEX idx_status (status),
+    INDEX idx_create_time (create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='押金明细表';
+
+-- 借阅订单表
+CREATE TABLE IF NOT EXISTS borrow_order (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '订单ID',
+    order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '订单编号',
+    borrower_id BIGINT NOT NULL COMMENT '借阅人员ID',
+    borrower_name VARCHAR(50) COMMENT '借阅人姓名',
+    borrower_phone VARCHAR(20) COMMENT '借阅人手机号',
+    book_id BIGINT NOT NULL COMMENT '图书ID',
+    book_title VARCHAR(100) COMMENT '图书名称',
+    book_isbn VARCHAR(20) COMMENT '图书ISBN',
+    borrow_date DATE NOT NULL COMMENT '借阅日期',
+    due_date DATE NOT NULL COMMENT '应还日期',
+    return_date DATE COMMENT '实际归还日期',
+    deposit_amount DECIMAL(10,2) DEFAULT 0.00 COMMENT '押金金额',
+    deposit_status TINYINT DEFAULT 0 COMMENT '押金状态：0-未退还，1-已退还',
+    deposit_return_time DATETIME COMMENT '押金退还时间',
+    payment_status TINYINT DEFAULT 0 COMMENT '支付状态：0-未支付，1-已支付',
+    payment_time DATETIME COMMENT '支付时间',
+    status TINYINT DEFAULT 0 COMMENT '订单状态：0-借阅中，1-已归还，2-逾期，3-已取消',
+    remark VARCHAR(255) COMMENT '备注',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除',
+    INDEX idx_order_no (order_no),
+    INDEX idx_borrower_id (borrower_id),
+    INDEX idx_book_id (book_id),
+    INDEX idx_status (status),
+    INDEX idx_deposit_status (deposit_status),
+    INDEX idx_payment_status (payment_status),
+    INDEX idx_borrow_date (borrow_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='借阅订单表';
+
+-- 插入借阅人员测试数据
+INSERT INTO borrower (name, phone, id_card, gender, address, deposit, status, remark) VALUES
+('王小明', '13900139001', '110101199001011234', 1, '北京市朝阳区建国路88号', 200.00, 1, 'VIP会员'),
+('李小红', '13900139002', '110101199202022345', 0, '北京市海淀区中关村大街1号', 150.00, 1, '普通会员'),
+('张小华', '13900139003', '110101199303033456', 1, '北京市西城区金融街10号', 300.00, 1, '高级会员'),
+('刘小芳', '13900139004', '110101199404044567', 0, '北京市东城区王府井大街5号', 100.00, 1, '普通会员'),
+('陈小强', '13900139005', '110101199505055678', 1, '北京市丰台区丰台路100号', 250.00, 1, 'VIP会员');
+
+-- 插入押金明细测试数据
+INSERT INTO deposit_record (borrower_id, borrower_name, amount, type, status, remark, operator_id, operator_name) VALUES
+(1, '王小明', 200.00, 1, 1, '首次缴纳押金', 1, '系统管理员'),
+(2, '李小红', 150.00, 1, 1, '首次缴纳押金', 1, '系统管理员'),
+(3, '张小华', 300.00, 1, 1, '首次缴纳押金', 1, '系统管理员'),
+(4, '刘小芳', 100.00, 1, 1, '首次缴纳押金', 1, '系统管理员'),
+(5, '陈小强', 250.00, 1, 1, '首次缴纳押金', 1, '系统管理员'),
+(1, '王小明', 50.00, 2, 1, '部分退还押金', 1, '系统管理员'),
+(3, '张小华', 100.00, 2, 1, '部分退还押金', 1, '系统管理员');
+
+-- 插入借阅订单测试数据
+INSERT INTO borrow_order (order_no, borrower_id, borrower_name, borrower_phone, book_id, book_title, book_isbn, borrow_date, due_date, return_date, deposit_amount, deposit_status, payment_status, status, remark) VALUES
+('BO20240101001', 1, '王小明', '13900139001', 1, '红楼梦', '978-7-111-1', '2024-01-01', '2024-01-31', '2024-01-25', 50.00, 1, 1, 1, '正常归还'),
+('BO20240102001', 2, '李小红', '13900139002', 2, '西游记', '978-7-111-2', '2024-01-02', '2024-02-01', NULL, 42.00, 0, 1, 0, '借阅中'),
+('BO20240103001', 3, '张小华', '13900139003', 3, '三体', '978-7-111-3', '2024-01-03', '2024-02-02', NULL, 58.00, 0, 1, 0, '借阅中'),
+('BO20240104001', 4, '刘小芳', '13900139004', 4, 'Java编程思想', '978-7-111-4', '2024-01-04', '2024-02-03', '2024-02-10', 108.00, 1, 1, 2, '逾期归还'),
+('BO20240105001', 5, '陈小强', '13900139005', 5, 'Spring实战', '978-7-111-5', '2024-01-05', '2024-02-04', NULL, 89.00, 0, 1, 0, '借阅中'),
+('BO20240201001', 1, '王小明', '13900139001', 3, '三体', '978-7-111-3', '2024-02-01', '2024-03-01', NULL, 58.00, 0, 1, 0, '借阅中'),
+('BO20240202001', 2, '李小红', '13900139002', 6, '明朝那些事儿', '978-7-111-6', '2024-02-02', '2024-03-02', '2024-02-28', 168.00, 1, 1, 1, '正常归还');
+
+-- 插入借阅管理相关权限
+INSERT INTO sys_permission (name, code, type, parent_id, path, component, icon, sort_order, status) VALUES
+('借阅人员', 'borrowers', 1, 0, '/borrowers', 'borrower/index', 'el-icon-user-solid', 8, 1),
+('押金明细', 'deposit', 1, 0, '/deposit', 'deposit/index', 'el-icon-wallet', 9, 1),
+('借阅订单', 'borrow-orders', 1, 0, '/borrow-orders', 'borrow-order/index', 'el-icon-tickets', 10, 1);
