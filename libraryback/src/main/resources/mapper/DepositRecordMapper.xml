@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.mapper.DepositRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.library.entity.DepositRecord">
+        <id column="id" property="id"/>
+        <result column="borrower_id" property="borrowerId"/>
+        <result column="borrower_name" property="borrowerName"/>
+        <result column="borrower_phone" property="borrowerPhone"/>
+        <result column="amount" property="amount"/>
+        <result column="type" property="type"/>
+        <result column="balance" property="balance"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <select id="selectDepositPage" resultMap="BaseResultMap">
+        SELECT 
+            dr.*,
+            bi.name as borrower_name,
+            bi.phone as borrower_phone
+        FROM deposit_record dr
+        LEFT JOIN borrower_info bi ON dr.borrower_id = bi.id
+        WHERE 1=1
+        <if test="borrowerId != null">
+            AND dr.borrower_id = #{borrowerId}
+        </if>
+        <if test="type != null">
+            AND dr.type = #{type}
+        </if>
+        ORDER BY dr.create_time DESC
+    </select>
+    
+    <select id="selectLatestRecord" resultMap="BaseResultMap">
+        SELECT * FROM deposit_record 
+        WHERE borrower_id = #{borrowerId}
+        ORDER BY create_time DESC 
+        LIMIT 1
+    </select>
+    
+</mapper>

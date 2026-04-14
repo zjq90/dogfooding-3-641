@@ -73,6 +73,9 @@ export default {
         { path: '/books', title: '图书管理', icon: 'el-icon-reading' },
         { path: '/categories', title: '分类管理', icon: 'el-icon-folder-opened' },
         { path: '/borrow', title: '借阅管理', icon: 'el-icon-document' },
+        { path: '/borrowers', title: '借阅人员', icon: 'el-icon-user-solid' },
+        { path: '/deposit', title: '押金明细', icon: 'el-icon-money' },
+        { path: '/orders', title: '借阅订单', icon: 'el-icon-s-order' },
         { path: '/users', title: '用户管理', icon: 'el-icon-user' },
         { path: '/departments', title: '部门管理', icon: 'el-icon-office-building' },
         { path: '/employees', title: '人员管理', icon: 'el-icon-s-custom' }
