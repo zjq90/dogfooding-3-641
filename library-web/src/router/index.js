@@ -58,6 +58,24 @@ const routes = [
         name: 'Employees',
         component: () => import('@/views/employee/index.vue'),
         meta: { title: '人员管理', icon: 'el-icon-s-custom' }
+      },
+      {
+        path: 'borrowers',
+        name: 'Borrowers',
+        component: () => import('@/views/borrower/index.vue'),
+        meta: { title: '借阅人员', icon: 'el-icon-user-solid' }
+      },
+      {
+        path: 'deposit',
+        name: 'Deposit',
+        component: () => import('@/views/borrower/deposit.vue'),
+        meta: { title: '押金明细', icon: 'el-icon-money' }
+      },
+      {
+        path: 'orders',
+        name: 'Orders',
+        component: () => import('@/views/borrower/order.vue'),
+        meta: { title: '借阅订单', icon: 'el-icon-s-order' }
       }
     ]
   },
