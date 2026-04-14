@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.mapper.BorrowOrderMapper">
+
+    <resultMap id="BorrowOrderResultMap" type="com.library.entity.BorrowOrder">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="borrower_id" property="borrowerId"/>
+        <result column="borrower_name" property="borrowerName"/>
+        <result column="borrower_phone" property="borrowerPhone"/>
+        <result column="book_id" property="bookId"/>
+        <result column="book_title" property="bookTitle"/>
+        <result column="book_isbn" property="bookIsbn"/>
+        <result column="borrow_date" property="borrowDate"/>
+        <result column="due_date" property="dueDate"/>
+        <result column="return_date" property="returnDate"/>
+        <result column="deposit_amount" property="depositAmount"/>
+        <result column="deposit_status" property="depositStatus"/>
+        <result column="deposit_return_time" property="depositReturnTime"/>
+        <result column="payment_status" property="paymentStatus"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectOrderPage" resultMap="BorrowOrderResultMap">
+        SELECT 
+            bo.id,
+            bo.order_no,
+            bo.borrower_id,
+            b.name AS borrower_name,
+            bo.borrower_phone,
+            bo.book_id,
+            bi.title AS book_title,
+            bi.isbn AS book_isbn,
+            bo.borrow_date,
+            bo.due_date,
+            bo.return_date,
+            bo.deposit_amount,
+            bo.deposit_status,
+            bo.deposit_return_time,
+            bo.payment_status,
+            bo.payment_time,
+            bo.status,
+            bo.remark,
+            bo.create_time,
+            bo.update_time
+        FROM borrow_order bo
+        LEFT JOIN borrower b ON bo.borrower_id = b.id AND b.deleted = 0
+        LEFT JOIN book_info bi ON bo.book_id = bi.id AND bi.deleted = 0
+        WHERE bo.deleted = 0
+        <if test="orderNo != null and orderNo != ''">
+            AND bo.order_no LIKE CONCAT('%', #{orderNo}, '%')
+        </if>
+        <if test="borrowerId != null">
+            AND bo.borrower_id = #{borrowerId}
+        </if>
+        <if test="bookId != null">
+            AND bo.book_id = #{bookId}
+        </if>
+        <if test="status != null">
+            AND bo.status = #{status}
+        </if>
+        <if test="depositStatus != null">
+            AND bo.deposit_status = #{depositStatus}
+        </if>
+        <if test="paymentStatus != null">
+            AND bo.payment_status = #{paymentStatus}
+        </if>
+        ORDER BY bo.create_time DESC
+    </select>
+
+</mapper>

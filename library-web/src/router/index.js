@@ -42,6 +42,24 @@ const routes = [
         meta: { title: '借阅管理', icon: 'el-icon-document' }
       },
       {
+        path: 'borrowers',
+        name: 'Borrowers',
+        component: () => import('@/views/borrower/index.vue'),
+        meta: { title: '借阅人员', icon: 'el-icon-user-solid' }
+      },
+      {
+        path: 'deposit',
+        name: 'Deposit',
+        component: () => import('@/views/deposit/index.vue'),
+        meta: { title: '押金明细', icon: 'el-icon-wallet' }
+      },
+      {
+        path: 'borrow-orders',
+        name: 'BorrowOrders',
+        component: () => import('@/views/borrow-order/index.vue'),
+        meta: { title: '借阅订单', icon: 'el-icon-tickets' }
+      },
+      {
         path: 'users',
         name: 'Users',
         component: () => import('@/views/user/index.vue'),
