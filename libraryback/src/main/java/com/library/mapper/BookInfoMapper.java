@@ -26,7 +26,7 @@ public interface BookInfoMapper extends BaseMapper<BookInfo> {
     BookInfo selectBookDetail(@Param("id") Long id);
     
     @Update("UPDATE book_info SET available_quantity = available_quantity + #{delta}, " +
-            "update_time = NOW() " +
+            "update_time = CURRENT_TIMESTAMP " +
             "WHERE id = #{id} AND available_quantity + #{delta} >= 0 AND deleted = 0")
     int updateAvailableQuantity(@Param("id") Long id, @Param("delta") int delta);
     
